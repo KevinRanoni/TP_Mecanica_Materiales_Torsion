@@ -1,0 +1,1658 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{times}
+\usepackage{setspace}
+\doublespacing 
+
+\usepackage{booktabs}
+
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, shapes, calc,patterns}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,patterns,decorations.pathreplacing}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{hyperref}
+
+% Configuración de encabezado (Basado en la imagen de la cátedra)
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{32pt}
+\fancyhead[L]{Universidad Nacional de Asunción \\ Facultad de Ingeniería}
+\fancyhead[R]{Mecánica de Materiales \\ Laboratorio Computacional}
+\fancyfoot[L]{1er Ciclo Académico 2026}
+\fancyfoot[R]{Página \thepage\ de \pageref{LastPage}}
+
+
+
+% Paquetes esenciales
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}  % Si usas babel en español
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+% TikZ con todas las librerías necesarias
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}      % Flechas avanzadas
+\usetikzlibrary{patterns}         % Rayados (empotramientos)
+\usetikzlibrary{decorations.markings}  % Decoraciones en líneas
+\usetikzlibrary{positioning}      % Posicionamiento relativo
+\usetikzlibrary{calc}             % Cálculos geométricos
+\usetikzlibrary{babel}            % ¡IMPORTANTE! Evita conflictos con babel
+
+% Configuración para evitar conflictos con babel en las flechas
+\tikzset{
+    >={Stealth[scale=1.2]},  % Estilo de flechas global
+    every picture/.style={semithick}
+}
+
+% Geometría de página
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+
+
+
+\begin{document}
+
+% --- Portada ---
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.6\textwidth]{logo_fiuna.png}\par\vspace{1cm}
+    {\scshape\Large Universidad Nacional de Asunción} \par
+    {\scshape\Large Facultad de Ingeniería} \par\vspace{1.5cm}
+    {\bfseries\Large Mecánica de Materiales - Laboratorio Computacional} \par\vspace{0.5cm}
+    {\large Trabajo Práctico N.º 1: Torsión en secciones circulares} \par\vspace{2cm}
+    
+    {\large \textbf{Estudiantes:}} \par
+    {Nombre Estudiante 1 - Matrícula} \par
+    {Nombre Estudiante 2 - Matrícula} \par
+    {Nombre Estudiante 3 - Matrícula} \par\vspace{1cm}
+    
+    {\large \textbf{Sección de Teoría:}} [Indicar Sección] \par\vspace{1cm}
+    {\large \textbf{Profesor:}} [Nombre del Profesor] \par\vspace{2cm}
+    
+    {\vfill \large 1er Ciclo Académico 2026 \par}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+% --- 2. Introducción ---
+\section{Introducción}
+% Importancia de la Resistencia de Materiales
+% Explicación del fenómeno de torsión
+% Introducción al software libre utilizado para la simulación (FreeCAD FEM)
+% Objetivo del trabajo
+
+% --- 3. Desarrollo de los Ejercicios ---
+\section{Desarrollo de los Ejercicios}
+
+% --- Ejercicio 1 ---
+\subsection{Ejercicio 1: Estructura isostática con tramo de dos materiales}
+
+\subsubsection{Aplicación industrial propuesta}
+El sistema analizado representa un eje de transmisión perteneciente a una cadena cinemática industrial accionada por motor eléctrico, en la cual el eje transmite momento torsor hacia componentes como poleas, engranajes o embragues. En este contexto, el tramo inicial del eje se plantea en acero por encontrarse sometido a un mayor momento torsor interno, mientras que el tramo final se plantea en aluminio para representar una solución de menor masa en una zona menos exigida del sistema.
+
+\subsubsection{Selección y justificación de materiales}
+Para el tramo inicial del eje se seleccionó acero SAE/AISI 1045 trefilado, debido a su uso frecuente en la fabricación de ejes y componentes mecanizados. Este material presenta una combinación adecuada de resistencia mecánica, rigidez torsional, maquinabilidad y disponibilidad comercial. Además, el proceso de trefilado en frío mejora el acabado superficial, la precisión dimensional y las propiedades mecánicas del material, por lo que resulta apropiado para aplicaciones de tornería y fabricación de ejes de transmisión.
+
+Para el tramo final se seleccionó la aleación de aluminio AA 6061-T6. La incorporación de este material no busca aumentar la rigidez torsional respecto al acero, sino representar una solución de diseño en la cual se reduce la masa del conjunto en una región donde el momento torsor interno es menor. Esta aleación posee buena maquinabilidad, buena resistencia a la corrosión y una resistencia mecánica suficiente para un tramo secundario del eje.
+
+La distribución adoptada responde al criterio de ubicar el material más rígido y resistente en la zona de mayor solicitación torsional, dejando el aluminio para la región donde el torque interno disminuye, de modo que se logra una configuración de dos materiales físicamente razonable y consistente con una aplicación industrial de transmisión mecánica.
+
+\begin{table}[H]
+\centering
+\caption{Propiedades mecánicas adoptadas para los materiales del eje}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Propiedad} & \textbf{SAE/AISI 1045 trefilado} & \textbf{AA 6061-T6} & \textbf{Unidad} \\
+\midrule
+Módulo de elasticidad, $E$ & 206 & 68.9 & GPa \\
+Módulo de rigidez, $G$ & 80 & 26 & GPa \\
+Límite de fluencia, $\sigma_y$ & 585 & 276 & MPa \\
+Densidad, $\rho$ & 7850 & 2700 & kg/m$^3$ \\
+\bottomrule
+\end{tabular}
+\label{tab:propiedades_materiales}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.1, >=Stealth]
+
+% --- Configuración de Coordenadas y Dimensiones ---
+\def\A{0}
+\def\B{4.5}   % Punto de cambio de material
+\def\C{9.0}   % Extremo derecho
+\def\y{0}
+\def\rA{0.7}  % Radio tramo de acero
+\def\rB{0.5}  % Radio tramo de aluminio
+
+% --- BARRA 3D (Sombreado y Extremos) ---
+% Tramo 1: Acero SAE/AISI 1045
+\shade[left color=gray!40, right color=gray!20, draw=black, thick] 
+    (\A,\rA) -- (\B,\rA) -- (\B,-\rA) -- (\A,-\rA) -- cycle;
+\node at (2.25, 0) {\small \textbf{ACERO SAE/AISI 1045}};
+
+% Tramo 2: Aluminio AA 6061-T6
+\shade[left color=gray!15, right color=gray!5, draw=black, thick] 
+    (\B,\rB) -- (\C,\rB) -- (\C,-\rB) -- (\B,-\rB) -- cycle;
+\node at (6.75, 0) {\small \textbf{ALUMINIO AA 6061-T6}};
+
+% Extremo derecho elíptico (Tapa 3D)
+\shade[top color=gray!30, bottom color=gray!5, draw=black, thick] 
+    (\C, 0) ellipse (0.15 and \rB);
+
+% --- EMPOTRAMIENTO (Soporte) ---
+\draw[fill=white, postaction={pattern=north east lines}] 
+    (\A-0.5, \rA+0.4) rectangle (\A, -\rA-0.4);
+\draw[very thick] (\A, \rA+0.4) -- (\A, -\rA-0.4);
+
+% --- REACCIÓN TORSIONAL EN EL EMPOTRAMIENTO (A) ---
+% Única reacción relevante para torsión pura: momento torsor M_A
+\draw[<->, thick, blue] (\A-1.0, 0) arc[start angle=180, end angle=270, radius=0.7];
+\draw[<->, thick, blue] (\A-1.0, 0) arc[start angle=180, end angle=90, radius=0.7];
+\node[blue, left] at (\A-1.2, \rA) {$M_A$};
+
+% --- COTAS DE DIÁMETRO ---
+\draw[<->, thin] (\A-0.8, \rA) -- node[left, font=\footnotesize] {$d_1 = 60$ mm} (\A-0.8, -\rA);
+\draw[<->, thin] (\C+0.3, \rB) -- node[right, font=\footnotesize] {$d_2 = 50$ mm} (\C+0.3, -\rB);
+
+% --- CARGAS EXTERNAS APLICADAS ---
+
+% M1 en B
+\draw[->, blue, ultra thick, domain=-100:160, samples=50] 
+    plot ({ \B + 0.3*cos(\x) }, { 1.2*\rA*sin(\x) });
+\node[blue, above right] at (\B+0.2, \rA+0.2) {$M_1 = 800$ N$\cdot$m};
+
+% M2 en C
+\draw[->, red, ultra thick, domain=60:320, samples=50] 
+    plot ({ \C + 0.15*cos(\x) }, { 1.3*\rB*sin(\x) });
+\node[red, right] at (\C+0.6, \rB + 0.5) {$M_2 = 500$ N$\cdot$m};
+
+% --- COTAS LONGITUDINALES ---
+\draw[|<->|] (\A, -\rA-0.8) -- node[below] {$L_1 = 1.2$ m} (\B, -\rA-0.8);
+\draw[|<->|] (\B, -\rA-0.8) -- node[below] {$L_2 = 1.3$ m} (\C, -\rA-0.8);
+\draw[|<->|] (\A, -\rA-1.5) -- node[below] {$L_{\text{total}} = 2.5$ m} (\C, -\rA-1.5);
+
+% --- LÍNEA DE REFERENCIA EN B ---
+\draw[dashed, gray] (\B, \rA+0.5) -- (\B, -\rA-0.5) node[below, black] {\footnotesize Cambio de material};
+
+\end{tikzpicture}
+\caption{Diagrama de cuerpo libre de la barra compuesta sometida a torsión pura.}
+\label{fig:dcl_completo}
+\end{figure}
+
+
+
+
+
+
+
+% --- Propiedades del tramo 1: Acero SAE/AISI 1045 trefilado ---
+\def\Eacero{206e9}
+\def\Gacero{80e9}
+\def\sigmayacero{585e6}
+\def\rhoacero{7850}
+
+% --- Propiedades del tramo 2: Aleación de aluminio AA 6061-T6 ---
+\def\Ealuminio{68.9e9}
+\def\Galuminio{26e9}
+\def\sigmayaluminio{276e6}
+\def\rhoaluminio{2700}
+
+\subsection*{Estructura Isostática Sometida a Torsión con Tramo de Dos Materiales}
+
+\subsection*{Datos del problema}
+
+Se tiene una barra circular maciza de \textbf{longitud total $L = 2.5$ m}, empotrada en su extremo izquierdo y libre en el extremo derecho. La barra está compuesta por dos tramos de diferentes materiales y secciones:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Tramo} & \textbf{Material} & \textbf{Longitud} & \textbf{Diámetro} \\
+\hline
+Tramo 1 (A--B) & Acero SAE/AISI 1045 trefilado & $L_1 = 1.2$ m & $d_1 = 60$ mm \\
+\hline
+Tramo 2 (B--C) & Aleación de aluminio AA 6061-T6 & $L_2 = 1.3$ m & $d_2 = 50$ mm \\
+\hline
+\end{tabular}
+\caption{Geometría y materiales adoptados para el eje compuesto.}
+\label{tab:datos_ej1}
+\end{table}
+
+\subsection*{Propiedades mecánicas adoptadas}
+
+En la Tabla \ref{tab:propiedades_ej1} se presentan las propiedades mecánicas adoptadas para el desarrollo analítico del problema.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Material} & \textbf{Módulo de elasticidad $E$} & \textbf{Módulo de corte $G$} & \textbf{Límite de fluencia $\sigma_y$} \\
+\hline
+Acero SAE/AISI 1045 trefilado & $206$ GPa & $80$ GPa & $585$ MPa \\
+\hline
+Aleación de aluminio AA 6061-T6 & $68.9$ GPa & $26$ GPa & $276$ MPa \\
+\hline
+\end{tabular}
+\caption{Propiedades mecánicas adoptadas para los materiales del eje.}
+\label{tab:propiedades_ej1}
+\end{table}
+
+\subsection*{Cargas aplicadas}
+
+\begin{itemize}
+    \item En el punto B (cambio de material y sección) se aplica un momento torsor puntual $M_1 = 800$ N$\cdot$m.
+    \item En el extremo C (libre) se aplica un momento torsor puntual $M_2 = 500$ N$\cdot$m.
+\end{itemize}
+
+\subsection*{Condiciones de apoyo}
+
+\begin{itemize}
+    \item En el extremo A existe un empotramiento; por lo tanto, el giro en dicho extremo es nulo, es decir, $\phi_A = 0$.
+\end{itemize}
+
+\subsection*{Criterio de distribución de materiales}
+
+La distribución de materiales se definió de acuerdo con la magnitud del momento torsor interno. El tramo inicial, sometido a una mayor solicitación torsional, se planteó en acero SAE/AISI 1045 trefilado debido a su mayor rigidez y mejor comportamiento mecánico para aplicaciones de ejes. En cambio, el tramo final, donde el momento torsor interno resulta menor, se planteó en aleación de aluminio AA 6061-T6, con el objetivo de reducir la masa del conjunto sin comprometer de forma crítica la capacidad resistente del sistema.
+
+
+\subsection*{Se pide}
+
+\begin{enumerate}
+    \item[a)] Dibujar el diagrama de cuerpo libre de la barra.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.1, >=Stealth]
+
+% --- Configuración de Coordenadas y Dimensiones ---
+\def\A{0}
+\def\B{4.5}   % Punto de cambio de material
+\def\C{9.0}   % Extremo derecho
+\def\y{0}
+\def\rA{0.7}  % Radio tramo de acero
+\def\rB{0.5}  % Radio tramo de aluminio
+
+% --- BARRA 3D (Sombreado y Extremos) ---
+% Tramo 1: Acero SAE/AISI 1045
+\shade[left color=gray!40, right color=gray!20, draw=black, thick] 
+    (\A,\rA) -- (\B,\rA) -- (\B,-\rA) -- (\A,-\rA) -- cycle;
+\node at (2.25, 0) {\small \textbf{ACERO SAE/AISI 1045}};
+
+% Tramo 2: Aluminio AA 6061-T6
+\shade[left color=gray!15, right color=gray!5, draw=black, thick] 
+    (\B,\rB) -- (\C,\rB) -- (\C,-\rB) -- (\B,-\rB) -- cycle;
+\node at (6.75, 0) {\small \textbf{ALUMINIO AA 6061-T6}};
+
+% Extremo derecho elíptico
+\shade[top color=gray!30, bottom color=gray!5, draw=black, thick] 
+    (\C, 0) ellipse (0.15 and \rB);
+
+% --- EMPOTRAMIENTO ---
+\draw[fill=white, postaction={pattern=north east lines}] 
+    (\A-0.5, \rA+0.4) rectangle (\A, -\rA-0.4);
+\draw[very thick] (\A, \rA+0.4) -- (\A, -\rA-0.4);
+
+% --- REACCIÓN TORSIONAL EN EL EMPOTRAMIENTO ---
+% Única reacción relevante para torsión pura
+\draw[<->, thick, blue] (\A-1.0, 0) arc[start angle=180, end angle=270, radius=0.7];
+\draw[<->, thick, blue] (\A-1.0, 0) arc[start angle=180, end angle=90, radius=0.7];
+\node[blue, left] at (\A-1.2, \rA) {$M_A$};
+
+% --- COTAS DE DIÁMETRO ---
+\draw[<->, thin] (\A-0.8, \rA) -- node[left, font=\footnotesize] {$d_1 = 60$ mm} (\A-0.8, -\rA);
+\draw[<->, thin] (\C+0.3, \rB) -- node[right, font=\footnotesize] {$d_2 = 50$ mm} (\C+0.3, -\rB);
+
+% --- CARGAS EXTERNAS APLICADAS ---
+
+% M1 en B
+\draw[->, blue, ultra thick, domain=-100:160, samples=50] 
+    plot ({ \B + 0.3*cos(\x) }, { 1.2*\rA*sin(\x) });
+\node[blue, above right] at (\B+0.2, \rA+0.2) {$M_1 = 800$ N$\cdot$m};
+
+% M2 en C
+\draw[->, red, ultra thick, domain=60:320, samples=50] 
+    plot ({ \C + 0.15*cos(\x) }, { 1.3*\rB*sin(\x) });
+\node[red, right] at (\C+0.6, \rB + 0.5) {$M_2 = 500$ N$\cdot$m};
+
+% --- COTAS LONGITUDINALES ---
+\draw[|<->|] (\A, -\rA-0.8) -- node[below] {$L_1 = 1.2$ m} (\B, -\rA-0.8);
+\draw[|<->|] (\B, -\rA-0.8) -- node[below] {$L_2 = 1.3$ m} (\C, -\rA-0.8);
+\draw[|<->|] (\A, -\rA-1.5) -- node[below] {$L_{\text{total}} = 2.5$ m} (\C, -\rA-1.5);
+
+% --- LÍNEA DE REFERENCIA EN B ---
+\draw[dashed, gray] (\B, \rA+0.5) -- (\B, -\rA-0.5)
+node[below, black] {\footnotesize Cambio de material y sección};
+
+\end{tikzpicture}
+\caption{Diagrama de cuerpo libre de la barra compuesta sometida a torsión pura.}
+\label{fig:dcl_completo2}
+\end{figure}
+
+\noindent
+En este problema de torsión pura, la única reacción externa relevante en el empotramiento es el momento torsor $M_A$, ya que no actúan fuerzas axiales ni transversales sobre la barra.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+   \item[b)] Calcular las reacciones en los apoyos.
+
+\subsection*{b) Cálculo de las reacciones en los apoyos}
+
+Para determinar la reacción en el empotramiento, se aplica la condición de equilibrio estático de momentos torsores alrededor del eje longitudinal de la barra. Dado que el sistema se encuentra sometido exclusivamente a torsión, la única reacción externa relevante en el apoyo fijo es el momento torsor de empotramiento $M_A$.
+
+\subsubsection*{Convención de signos adoptada}
+\begin{itemize}
+    \item Eje $x$: dirección longitudinal de la barra.
+    \item Momento torsor positivo: sentido antihorario visto desde el extremo derecho.
+\end{itemize}
+
+\subsubsection*{Cargas externas actuantes}
+
+Sobre la barra actúan los siguientes momentos torsores:
+\begin{itemize}
+    \item $M_1 = 800\ \text{N$\cdot$m}$ aplicado en el punto B, en sentido horario.
+    \item $M_2 = 500\ \text{N$\cdot$m}$ aplicado en el extremo C, en sentido antihorario.
+\end{itemize}
+
+De acuerdo con la convención adoptada:
+\[
+M_1 = -800\ \text{N$\cdot$m}
+\qquad ; \qquad
+M_2 = +500\ \text{N$\cdot$m}
+\]
+
+\subsubsection*{Ecuación de equilibrio torsional}
+
+La condición de equilibrio de momentos torsores respecto del eje longitudinal es:
+
+\begin{equation}
+\sum M_x = 0
+\end{equation}
+
+Por lo tanto,
+
+\begin{equation}
+M_A + M_1 + M_2 = 0
+\end{equation}
+
+Sustituyendo los valores con signo:
+
+\begin{equation}
+M_A - 800 + 500 = 0
+\end{equation}
+
+\begin{equation}
+M_A - 300 = 0
+\end{equation}
+
+\begin{equation}
+\boxed{M_A = 300\ \text{N$\cdot$m}}
+\end{equation}
+
+\subsubsection*{Resultado}
+
+La reacción torsional en el empotramiento es:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Reacción} & \textbf{Símbolo} & \textbf{Valor} \\
+\hline
+Momento torsor de empotramiento & $M_A$ & $300\ \text{N$\cdot$m}$ \\
+\hline
+\end{tabular}
+\caption{Reacción torsional en el empotramiento}
+\label{tab:reacciones}
+\end{table}
+
+\subsubsection*{Interpretación física}
+
+El momento torsor de empotramiento $M_A = 300$ N$\cdot$m representa la reacción necesaria para equilibrar el efecto combinado de los momentos aplicados sobre la barra. Dado que el momento horario aplicado en B tiene mayor magnitud que el momento antihorario aplicado en C, el empotramiento debe aportar un momento positivo para mantener el equilibrio global del sistema. Esto confirma que la reacción torsional en A no depende de la geometría ni del material de la barra, sino exclusivamente de la condición de equilibrio estático.
+
+\subsubsection*{Verificación del equilibrio}
+
+La verificación del equilibrio torsional se realiza comprobando que la suma algebraica de momentos respecto del eje longitudinal sea nula:
+
+\begin{equation}
+\sum M_x = 300 - 800 + 500 = 0 \quad \checkmark
+\end{equation}
+
+Este resultado confirma que la reacción calculada en el empotramiento es consistente con el sistema de cargas aplicado. Al tratarse de un problema de torsión pura, no aparecen fuerzas axiales ni transversales externas; por ello, la única reacción relevante en el apoyo es el momento torsor.
+
+\item[c)] Determinar el diagrama de momento torsor.
+
+\subsection*{c) Determinación del diagrama de momento torsor}
+
+\subsubsection*{Método de las secciones}
+
+El diagrama de momento torsor se obtiene aplicando equilibrio a secciones sucesivas de la barra. Para ello, se recorre el eje desde el extremo izquierdo A hasta el extremo derecho C y se analiza la parte izquierda de cada corte, identificando el momento torsor interno necesario para equilibrar las acciones externas presentes en cada tramo.
+
+\subsubsection*{Convención de signos}
+
+Para construir el diagrama de momento torsor se adopta la siguiente convención:
+
+\begin{itemize}
+    \item Momento torsor positivo: aquel que produce un giro antihorario en la sección cuando se observa desde el extremo derecho de la barra.
+    \item Los valores positivos se representan por encima del eje de referencia y los negativos por debajo del mismo.
+\end{itemize}
+
+Del apartado anterior se obtuvo:
+
+\begin{equation}
+M_A = +300\ \text{N$\cdot$m}
+\end{equation}
+Además, según la convención adoptada:
+\[
+M_1 = -800\ \text{N$\cdot$m},
+\qquad
+M_2 = +500\ \text{N$\cdot$m}
+\]
+
+\subsubsection*{Tramo A-B \texorpdfstring{$(0 \leq x < 1.2\ \text{m})$}{(0 <= x < 1.2 m)}}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=Stealth, scale=0.8]
+\draw[thick] (0,0) -- (4,0);
+\draw[pattern=north east lines] (-0.5,-0.4) rectangle (0,0.4);
+
+\draw[<->, thick, blue] (-1.2,0) arc[start angle=180, end angle=270, radius=0.6];
+\draw[<->, thick, blue] (-1.2,0) arc[start angle=180, end angle=90, radius=0.6];
+\node[blue] at (-1.8,0) {$M_A = 300$ N$\cdot$m};
+
+\draw[dashed] (2, -0.6) -- (2, 0.6);
+\node at (2, -0.8) {Sección};
+
+\draw[->, thick, red] (2.5, 0.3) arc[start angle=0, end angle=90, radius=0.4];
+\draw[->, thick, red] (2.5, -0.3) arc[start angle=0, end angle=-90, radius=0.4];
+\node[red] at (3.0, 0) {$T(x)$};
+\end{tikzpicture}
+\caption{Equilibrio en el tramo A-B}
+\end{figure}
+
+Se realiza un corte en una sección ubicada dentro del tramo A-B y se considera el equilibrio de la parte izquierda:
+
+\begin{equation}
+\sum M_x = 0 \quad \Rightarrow \quad M_A - T(x) = 0
+\end{equation}
+
+\begin{equation}
+T(x) = M_A = 300\ \text{N$\cdot$m}
+\end{equation}
+
+Por lo tanto, en el tramo A-B el momento torsor es \textbf{constante y positivo}:
+
+\begin{equation}
+\boxed{T_{AB} = +300\ \text{N$\cdot$m}}
+\end{equation}
+
+\subsubsection*{Tramo B-C \texorpdfstring{$(1.2 \leq x \leq 2.5\ \text{m})$}{(1.2 <= x <= 2.5 m)}}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=Stealth, scale=0.8]
+\draw[thick] (0,0) -- (5,0);
+\draw[pattern=north east lines] (-0.5,-0.4) rectangle (0,0.4);
+
+\draw[<->, thick, blue] (-1.2,0) arc[start angle=180, end angle=270, radius=0.6];
+\draw[<->, thick, blue] (-1.2,0) arc[start angle=180, end angle=90, radius=0.6];
+\node[blue] at (-1.8,0) {$M_A = 300$ N$\cdot$m};
+
+\draw[->, thick, blue] (2.5, 0.6) arc[start angle=90, end angle=0, radius=0.5];
+\draw[->, thick, blue] (2.5, 0.6) arc[start angle=90, end angle=180, radius=0.5];
+\node[blue] at (2.5, 1.1) {$M_1 = 800$ N$\cdot$m};
+
+\draw[dashed] (4, -0.6) -- (4, 0.6);
+\node at (4, -0.8) {Sección};
+
+\draw[->, thick, red] (4.5, 0.3) arc[start angle=0, end angle=90, radius=0.4];
+\draw[->, thick, red] (4.5, -0.3) arc[start angle=0, end angle=-90, radius=0.4];
+\node[red] at (5.0, 0) {$T(x)$};
+\end{tikzpicture}
+\caption{Equilibrio en el tramo B-C}
+\end{figure}
+
+Se realiza un corte en una sección ubicada dentro del tramo B-C. Considerando el equilibrio de la parte izquierda:
+
+\begin{equation}
+\sum M_x = 0 \quad \Rightarrow \quad M_A + M_1 - T(x) = 0
+\end{equation}
+
+\begin{equation}
+T(x) = M_A + M_1
+\end{equation}
+
+Sustituyendo los valores con signo:
+
+\begin{equation}
+T(x) = 300 + (-800) = -500\ \text{N$\cdot$m}
+\end{equation}
+
+Por lo tanto, en el tramo B-C el momento torsor es \textbf{constante y negativo}:
+
+\begin{equation}
+\boxed{T_{BC} = -500\ \text{N$\cdot$m}}
+\end{equation}
+
+\subsubsection*{Diagrama de momento torsor}
+
+Con los valores obtenidos, se construye el diagrama de momento torsor:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.9, >=Stealth]
+
+% Ejes
+\draw[->, thick] (-0.5,0) -- (10,0) node[right] {$x$ (m)};
+\draw[->, thick] (0,-3) -- (0,2) node[above] {$T(x)$ (N$\cdot$m)};
+
+% Línea de referencia
+\draw[thin, gray] (0,0) -- (10,0);
+
+% Puntos de cambio
+\draw[dashed, thin] (0, -2.8) -- (0, 1.5);
+\draw[dashed, thin] (4.3, -2.8) -- (4.3, 1.5);
+\draw[dashed, thin] (9, -2.8) -- (9, 1.5);
+
+% Etiquetas de posición
+\node at (0, -0.3) {$0$};
+\node at (4.3, -0.3) {$1.2$};
+\node at (9, -0.3) {$2.5$};
+
+% Tramo A-B
+\draw[thick, blue] (0, 1.2) -- (4.3, 1.2);
+\fill[blue] (0, 1.2) circle (0.08);
+\fill[blue] (4.3, 1.2) circle (0.08);
+
+% Tramo B-C
+\draw[thick, red] (4.3, -2.0) -- (9, -2.0);
+\fill[red] (4.3, -2.0) circle (0.08);
+\fill[red] (9, -2.0) circle (0.08);
+
+% Valores
+\node[blue] at (2.1, 1.45) {$+300$ N$\cdot$m};
+\node[red] at (6.5, -2.3) {$-500$ N$\cdot$m};
+
+% Relleno
+\fill[blue!10] (0,0) rectangle (4.3, 1.2);
+\fill[red!10] (4.3,-2.0) rectangle (9,0);
+
+% Salto en B
+\draw[thick, dashed] (4.3, -2.0) -- (4.3, 1.2);
+
+% Etiquetas
+\node at (0, -0.55) {A};
+\node at (4.3, -0.55) {B};
+\node at (9, -0.55) {C};
+
+\end{tikzpicture}
+\caption{Diagrama de momento torsor $T(x)$.}
+\label{fig:diagrama_torsor}
+\end{figure}
+
+\subsubsection*{Expresión analítica del momento torsor}
+
+La función de momento torsor puede expresarse en forma segmentada como:
+
+\begin{equation}
+T(x)=
+\begin{cases}
++300\ \text{N$\cdot$m}, & 0 \leq x < 1.2\ \text{m} \\[6pt]
+-500\ \text{N$\cdot$m}, & 1.2 \leq x \leq 2.5\ \text{m}
+\end{cases}
+\end{equation}
+
+\subsubsection*{Interpretación del diagrama}
+
+\begin{itemize}
+    \item En el tramo A-B, el momento torsor es constante y positivo, con valor de $+300$ N$\cdot$m.
+    \item En el tramo B-C, el momento torsor es constante y negativo, con valor de $-500$ N$\cdot$m.
+    \item En el punto B se produce una discontinuidad de magnitud $800$ N$\cdot$m, asociada a la aplicación del momento torsor puntual $M_1$.
+    \item En el extremo C, la aplicación del momento puntual $M_2 = 500$ N$\cdot$m permite que el diagrama cierre en equilibrio.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+\item[d)] Indicar el valor y la posición del momento torsor máximo.
+
+\subsection*{d) Valor y posición del momento torsor máximo}
+
+A partir del diagrama de momento torsor obtenido en la sección anterior, se determina el momento torsor máximo en valor absoluto, ya que para el dimensionamiento y el análisis de tensiones interesa la magnitud máxima, independientemente del signo algebraico.
+
+\subsubsection*{Análisis de los valores obtenidos}
+
+Del diagrama de momento torsor se tienen los siguientes valores:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Tramo} & \textbf{Intervalo} & \textbf{Momento torsor} & \textbf{Valor absoluto} \\
+\hline
+A--B & $0 \leq x < 1.2$ m & $+300$ N$\cdot$m & $300$ N$\cdot$m \\
+\hline
+B--C & $1.2 \leq x \leq 2.5$ m & $-500$ N$\cdot$m & $500$ N$\cdot$m \\
+\hline
+\end{tabular}
+\caption{Valores del momento torsor por tramos.}
+\label{tab:valores_torsor}
+\end{table}
+
+\subsubsection*{Momento torsor máximo}
+
+Comparando los valores absolutos:
+
+\begin{equation}
+|T|_{AB} = 300\ \text{N$\cdot$m}
+\qquad \text{y} \qquad
+|T|_{BC} = 500\ \text{N$\cdot$m}
+\end{equation}
+
+Por lo tanto,
+
+\begin{equation}
+\boxed{|T|_{\max} = 500\ \text{N$\cdot$m}}
+\end{equation}
+
+\subsubsection*{Posición del momento torsor máximo}
+
+El momento torsor máximo en valor absoluto se presenta en el tramo B--C, es decir, en el intervalo:
+
+\begin{equation}
+\boxed{1.2\ \text{m} \leq x \leq 2.5\ \text{m}}
+\end{equation}
+
+Por consiguiente, el valor máximo se localiza desde el punto B, donde cambia el material y la sección, hasta el extremo libre C.
+
+\subsubsection*{Representación gráfica}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.9, >=Stealth]
+
+% Ejes
+\draw[->, thick] (-0.5,0) -- (10,0) node[right] {$x$ (m)};
+\draw[->, thick] (0,-3) -- (0,2) node[above] {$T(x)$ (N$\cdot$m)};
+
+% Línea horizontal de referencia
+\draw[thin, gray] (0,0) -- (10,0);
+
+% Puntos de cambio
+\draw[dashed, thin] (0, -2.8) -- (0, 1.5);
+\draw[dashed, thin] (4.3, -2.8) -- (4.3, 1.5);
+\draw[dashed, thin] (9, -2.8) -- (9, 1.5);
+
+% Etiquetas de posición
+\node at (0, -0.3) {$0$};
+\node at (4.3, -0.3) {$1.2$};
+\node at (9, -0.3) {$2.5$};
+
+% Tramo A-B: T = +300 N·m
+\draw[thick, blue] (0, 1.2) -- (4.3, 1.2);
+\fill[blue] (0, 1.2) circle (0.08);
+\fill[blue] (4.3, 1.2) circle (0.08);
+
+% Tramo B-C: T = -500 N·m
+\draw[thick, red, line width=1.2pt] (4.3, -2.0) -- (9, -2.0);
+\fill[red] (4.3, -2.0) circle (0.08);
+\fill[red] (9, -2.0) circle (0.08);
+
+% Valores numéricos
+\node[blue] at (2.1, 1.45) {$+300$ N$\cdot$m};
+\node[red, font=\bfseries] at (6.6, -2.35) {$|T|_{\max} = 500$ N$\cdot$m};
+
+% Relleno del tramo con momento máximo
+\fill[red!20] (4.3,-2.0) rectangle (9,0);
+
+% Indicador visual
+\draw[decorate, decoration={brace, amplitude=8pt, raise=5pt}, thick, red] 
+    (4.3, -2.8) -- (9, -2.8);
+\node[red, below, font=\small] at (6.65, -3.2) {Tramo de momento torsor máximo};
+
+% Línea vertical en B
+\draw[thick, dashed] (4.3, -2.2) -- (4.3, 1.4);
+
+% Etiquetas de puntos
+\node at (0, -0.5) {A};
+\node at (4.3, -0.5) {B};
+\node at (9, -0.5) {C};
+
+% Flecha indicadora
+\draw[->, thick, red] (7.5, -1.0) -- (7.5, -1.8);
+\node[red, right] at (7.7, -1.4) {\textbf{Máximo}};
+
+\end{tikzpicture}
+\caption{Diagrama de momento torsor con indicación del valor máximo.}
+\label{fig:torsor_maximo}
+\end{figure}
+
+\subsubsection*{Observaciones importantes}
+
+\begin{itemize}
+    \item El momento torsor máximo en valor absoluto es $500\ \text{N$\cdot$m}$ y se presenta en todo el tramo B--C.
+    \item Este valor será determinante en el cálculo de la tensión cortante máxima, aunque el valor final de la tensión también dependerá de la geometría de la sección transversal.
+    \item El signo negativo del momento torsor en el tramo B--C indica únicamente el sentido de giro según la convención adoptada; para la verificación resistente se emplea el valor absoluto.
+    \item La constancia del momento torsor en cada tramo se debe a que no existen cargas torsionales distribuidas a lo largo de la barra.
+\end{itemize}
+
+
+
+\subsubsection*{Justificación adicional}
+
+Para confirmar que no existe un valor mayor en otros puntos, se verifica que:
+\begin{itemize}
+    \item En el empotramiento A, el momento torsor interno es de $+300$ N$\cdot$m, inferior al máximo en valor absoluto.
+    \item En el punto B, el momento torsor experimenta una discontinuidad debido a la aplicación del momento puntual $M_1$, pasando de $+300$ N$\cdot$m a $-500$ N$\cdot$m.
+    \item En el extremo libre C, el momento torsor interno es de $-500$ N$\cdot$m, cuyo valor absoluto coincide con el máximo.
+\end{itemize}
+
+Por lo tanto, el valor máximo del momento torsor se mantiene constante en todo el tramo B--C.
+
+\item[e)] Determinar el ángulo de giro máximo, indicando su posición.
+
+\subsection*{e) Determinación del ángulo de giro máximo}
+
+El ángulo de giro en una barra sometida a torsión se calcula mediante la ecuación fundamental de la torsión elástica:
+
+\begin{equation}
+\phi = \int_0^L \frac{T(x)}{G(x)\,J(x)} \, dx
+\end{equation}
+
+donde:
+\begin{itemize}
+    \item $T(x)$: momento torsor interno en la sección,
+    \item $G(x)$: módulo de rigidez transversal del material,
+    \item $J(x)$: momento polar de inercia de la sección transversal.
+\end{itemize}
+
+Como la barra está compuesta por dos tramos con materiales, diámetros y momentos torsores constantes por tramo, el giro total puede obtenerse sumando algebraicamente el aporte de cada segmento:
+
+\begin{equation}
+\phi_C = \phi_{AB} + \phi_{BC}
+\end{equation}
+
+\subsubsection*{Propiedades geométricas de las secciones}
+
+Para secciones circulares macizas, el momento polar de inercia se calcula como:
+
+\begin{equation}
+J = \frac{\pi d^4}{32}
+\end{equation}
+
+\textbf{Tramo 1 (A--B) -- Acero SAE/AISI 1045 trefilado:}
+\begin{equation}
+d_1 = 60\ \text{mm} = 0.060\ \text{m}
+\end{equation}
+
+\begin{equation}
+J_1 = \frac{\pi (0.060)^4}{32}
+= \frac{\pi (1.296 \times 10^{-5})}{32}
+= 1.272 \times 10^{-6}\ \text{m}^4
+\end{equation}
+
+\textbf{Tramo 2 (B--C) -- Aleación de aluminio AA 6061-T6:}
+\begin{equation}
+d_2 = 50\ \text{mm} = 0.050\ \text{m}
+\end{equation}
+
+\begin{equation}
+J_2 = \frac{\pi (0.050)^4}{32}
+= \frac{\pi (6.25 \times 10^{-6})}{32}
+= 6.136 \times 10^{-7}\ \text{m}^4
+\end{equation}
+
+\subsubsection*{Módulos de rigidez transversal adoptados}
+
+\begin{itemize}
+    \item Acero SAE/AISI 1045 trefilado: $G_{ac} = 80\ \text{GPa} = 80 \times 10^9\ \text{Pa}$
+    \item Aleación de aluminio AA 6061-T6: $G_{al} = 26\ \text{GPa} = 26 \times 10^9\ \text{Pa}$
+\end{itemize}
+
+
+\subsubsection*{Cálculo del ángulo de giro por tramos}
+
+El ángulo de giro total en el extremo libre C se obtiene sumando algebraicamente las contribuciones de cada tramo, considerando que el empotramiento en A impide el giro, es decir, $\phi_A = 0$.
+
+\paragraph{Tramo A-B ($0 \leq x \leq 1.2$ m):}
+\begin{equation}
+\phi_B=\phi_A+\int_0^{L_1}\frac{T_{AB}}{G_{ac}\,J_1}\,dx
+=0+\frac{T_{AB}\,L_1}{G_{ac}\,J_1}
+\end{equation}
+
+Sustituyendo valores:
+\begin{equation}
+\phi_B=\frac{300\ \text{N$\cdot$m}\cdot 1.2\ \text{m}}
+{(80\times 10^9\ \text{Pa})\cdot (1.272\times 10^{-6}\ \text{m}^4)}
+\end{equation}
+
+\begin{equation}
+\phi_B=\frac{360}{80\times 10^9 \cdot 1.272\times 10^{-6}}
+=\frac{360}{101.76\times 10^3}
+\end{equation}
+
+\begin{equation}
+\phi_B=3.538\times 10^{-3}\ \text{rad}
+\end{equation}
+
+Convertido a grados:
+\begin{equation}
+\phi_B=3.538\times 10^{-3}\cdot \frac{180}{\pi}=0.203^\circ
+\end{equation}
+
+\paragraph{Tramo B-C ($1.2 < x \leq 2.5$ m):}
+\begin{equation}
+\phi_C=\phi_B+\int_{L_1}^{L_1+L_2}\frac{T_{BC}}{G_{al}\,J_2}\,dx
+=\phi_B+\frac{T_{BC}\,L_2}{G_{al}\,J_2}
+\end{equation}
+
+Sustituyendo valores:
+\begin{equation}
+\phi_C=3.538\times 10^{-3}
++\frac{(-500\ \text{N$\cdot$m})\cdot 1.3\ \text{m}}
+{(26\times 10^9\ \text{Pa})\cdot (6.136\times 10^{-7}\ \text{m}^4)}
+\end{equation}
+
+\begin{equation}
+\phi_C=3.538\times 10^{-3}
++\frac{-650}{26\times 10^9 \cdot 6.136\times 10^{-7}}
+\end{equation}
+
+\begin{equation}
+\phi_C=3.538\times 10^{-3}
++\frac{-650}{15.9536\times 10^3}
+\end{equation}
+
+\begin{equation}
+\phi_C=3.538\times 10^{-3}-40.742\times 10^{-3}
+\end{equation}
+
+\begin{equation}
+\phi_C=-37.204\times 10^{-3}\ \text{rad}
+\end{equation}
+
+Convertido a grados:
+\begin{equation}
+\phi_C=-37.204\times 10^{-3}\cdot \frac{180}{\pi}=-2.132^\circ
+\end{equation}
+
+\subsubsection*{Análisis del ángulo de giro máximo}
+
+El ángulo de giro máximo se refiere al mayor valor absoluto del giro a lo largo de la barra. Analizando los valores obtenidos:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Punto} & \textbf{Posición (m)} & \textbf{Ángulo (rad)} & \textbf{Ángulo (grados)} \\
+\hline
+A & $0$ & $0$ & $0^\circ$ \\
+\hline
+B & $1.2$ & $+3.538 \times 10^{-3}$ & $+0.203^\circ$ \\
+\hline
+C & $2.5$ & $-37.204 \times 10^{-3}$ & $-2.132^\circ$ \\
+\hline
+\end{tabular}
+\caption{Ángulos de giro en puntos característicos.}
+\label{tab:angulos_giro}
+\end{table}
+
+\subsubsection*{Valor del ángulo de giro máximo}
+
+El valor máximo en valor absoluto ocurre en el extremo libre C:
+
+\begin{equation}
+\boxed{|\phi|_{\max}=37.204\times 10^{-3}\ \text{rad}=2.132^\circ}
+\end{equation}
+
+\subsubsection*{Posición del ángulo de giro máximo}
+
+\begin{equation}
+\boxed{x=2.5\ \text{m}\quad (\text{punto C, extremo libre})}
+\end{equation}
+
+\subsubsection*{Representación gráfica de la deformación angular}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.9, >=Stealth]
+
+% Ejes
+\draw[->, thick] (-0.5,0) -- (10,0) node[right] {$x$ (m)};
+\draw[->, thick] (0,-3.5) -- (0,1.5) node[above] {$\phi(x)$};
+
+% Línea horizontal de referencia
+\draw[thin, gray] (0,0) -- (10,0);
+
+% Puntos de cambio
+\draw[dashed, thin] (0, -3.2) -- (0, 1.2);
+\draw[dashed, thin] (4.3, -3.2) -- (4.3, 1.2);
+\draw[dashed, thin] (9, -3.2) -- (9, 1.2);
+
+% Etiquetas de posición
+\node at (0, -0.3) {$0$};
+\node at (4.3, -0.3) {$1.2$};
+\node at (9, -0.3) {$2.5$};
+
+% Diagrama escalado visualmente
+\draw[thick, blue] (0, 0) -- (4.3, 0.35);
+\draw[thick, blue] (4.3, 0.35) -- (9, -2.6);
+
+% Puntos importantes
+\fill[blue] (0,0) circle (0.05);
+\fill[blue] (4.3,0.35) circle (0.05);
+\fill[blue] (9,-2.6) circle (0.05);
+
+% Etiquetas de valores reales
+\node[blue, left] at (0, 0) {$\phi_A=0$};
+\node[blue, above] at (4.3, 0.45) {$\phi_B=+3.54\times 10^{-3}$ rad};
+\node[blue, below] at (9, -2.7) {$\phi_C=-37.20\times 10^{-3}$ rad};
+
+% Indicación del ángulo máximo
+\draw[->, thick, red] (8.0, -1.7) -- (8.8, -2.45);
+\node[red, right, font=\bfseries] at (8.5, -1.5)
+    {$|\phi|_{\max}=37.20\times 10^{-3}$ rad};
+
+% Relleno visual
+\fill[blue!10] (0,0) -- (4.3,0.35) -- (9,-2.6) -- (9,0) -- cycle;
+
+% Línea vertical en B
+\draw[dashed, gray] (4.3, -2.8) -- (4.3, 0.5);
+
+% Etiqueta de puntos
+\node at (0, -0.5) {A};
+\node at (4.3, -0.5) {B};
+\node at (9, -0.5) {C};
+
+\end{tikzpicture}
+\caption{Diagrama cualitativo del ángulo de giro $\phi(x)$ a lo largo de la barra.}
+\label{fig:angulo_giro}
+\end{figure}
+
+\subsubsection*{Interpretación física de los resultados}
+
+\begin{itemize}
+    \item El ángulo de giro máximo en valor absoluto ocurre en el \textbf{extremo libre C}, con un valor de $2.132^\circ$ en sentido horario, es decir, negativo según la convención adoptada.
+    \item En el punto B, correspondiente al cambio de material y sección, el giro es positivo ($0.203^\circ$ en sentido antihorario).
+    \item El giro total cambia de signo dentro del tramo B-C porque la contribución negativa del segundo tramo supera al giro positivo acumulado en el tramo A-B.
+    \item Este comportamiento se debe a que en el tramo B-C actúa un momento torsor de mayor magnitud absoluta, y además dicho tramo posee menor rigidez torsional, ya que el aluminio presenta menor módulo de corte y menor momento polar de inercia.
+    \item Existe un punto entre B y C donde el ángulo de giro es nulo; en esa sección la barra no presenta rotación neta respecto al empotramiento.
+\end{itemize}
+
+\subsubsection*{Verificación de la compatibilidad geométrica}
+
+Se verifica que en el empotramiento A el giro es nulo ($\phi_A = 0$), cumpliendo la condición de borde impuesta. Asimismo, el giro en el extremo libre C resulta negativo, lo cual es coherente con el hecho de que en el tramo final predomina un momento torsor negativo y además dicho tramo posee menor rigidez torsional.
+
+\subsubsection*{Cálculo alternativo del punto de giro nulo}
+
+Opcionalmente, puede determinarse la posición dentro del tramo B--C donde el ángulo de giro se anula:
+
+\begin{equation}
+\phi(x)=\phi_B+\frac{T_{BC}}{G_{al}\,J_2}(x-L_1)=0
+\end{equation}
+
+Sustituyendo los valores:
+
+\begin{equation}
+3.538\times 10^{-3}
++\frac{-500}{26\times 10^9 \cdot 6.136\times 10^{-7}}(x-1.2)=0
+\end{equation}
+
+\begin{equation}
+3.538\times 10^{-3}-0.03134\,(x-1.2)=0
+\end{equation}
+
+Despejando:
+
+\begin{equation}
+x-1.2=\frac{3.538\times 10^{-3}}{0.03134}=0.1129\ \text{m}
+\end{equation}
+
+\begin{equation}
+x \approx 1.3129\ \text{m}
+\end{equation}
+
+Este resultado indica que el punto de giro nulo se encuentra dentro del tramo B--C, a una distancia aproximada de $0.113$ m a la derecha del punto B. Esto confirma que el efecto torsional negativo del segundo tramo supera al giro positivo acumulado en el tramo A--B.
+
+\item[f)] Calcular las tensiones cortantes máximas.
+
+\subsection*{f) Cálculo de las tensiones cortantes máximas}
+
+La tensión cortante máxima en una sección circular maciza sometida a torsión se calcula mediante la expresión:
+
+\begin{equation}
+\tau_{\max}=\frac{T\,r}{J}=\frac{T}{W_t}
+\end{equation}
+
+donde:
+\begin{itemize}
+    \item $T$: momento torsor interno en la sección,
+    \item $r$: radio exterior de la sección,
+    \item $J$: momento polar de inercia,
+    \item $W_t$: módulo resistente a la torsión, definido como $W_t=J/r$.
+\end{itemize}
+
+\subsubsection*{Módulo resistente a la torsión}
+
+Para una sección circular maciza, el módulo resistente a la torsión se define como:
+
+\begin{equation}
+W_t=\frac{J}{r}=\frac{\pi d^3}{16}
+\end{equation}
+
+\subsubsection*{Cálculo de los módulos resistentes}
+
+\textbf{Tramo A--B (Acero SAE/AISI 1045 trefilado, $d_1=60$ mm):}
+\begin{equation}
+W_{t1}=\frac{\pi(0.060)^3}{16}
+=\frac{\pi(2.16\times 10^{-4})}{16}
+=4.241\times 10^{-5}\ \text{m}^3
+\end{equation}
+
+\textbf{Tramo B--C (Aleación de aluminio AA 6061-T6, $d_2=50$ mm):}
+\begin{equation}
+W_{t2}=\frac{\pi(0.050)^3}{16}
+=\frac{\pi(1.25\times 10^{-4})}{16}
+=2.454\times 10^{-5}\ \text{m}^3
+\end{equation}
+
+\subsubsection*{Tensiones cortantes máximas por tramo}
+
+\paragraph{Tramo A--B \texorpdfstring{$(T_{AB}=+300\ \text{N$\cdot$m})$}{(TAB = +300 N·m)}}
+\begin{equation}
+\tau_{\max,AB}=\frac{|T_{AB}|}{W_{t1}}
+=\frac{300}{4.241\times 10^{-5}}
+=7.074\times 10^6\ \text{Pa}
+\end{equation}
+
+\begin{equation}
+\boxed{\tau_{\max,AB}=7.07\ \text{MPa}}
+\end{equation}
+
+\paragraph{Tramo B--C \texorpdfstring{$(T_{BC}=-500\ \text{N$\cdot$m})$}{(TBC = -500 N·m)}}
+\begin{equation}
+\tau_{\max,BC}=\frac{|T_{BC}|}{W_{t2}}
+=\frac{500}{2.454\times 10^{-5}}
+=20.374\times 10^6\ \text{Pa}
+\end{equation}
+
+\begin{equation}
+\boxed{\tau_{\max,BC}=20.37\ \text{MPa}}
+\end{equation}
+
+\subsubsection*{Tensión cortante máxima absoluta}
+
+Comparando los valores obtenidos:
+
+\begin{equation}
+\tau_{\max,AB}=7.07\ \text{MPa}
+\qquad \text{y} \qquad
+\tau_{\max,BC}=20.37\ \text{MPa}
+\end{equation}
+
+Por lo tanto,
+
+\begin{equation}
+\boxed{\tau_{\max}=20.37\ \text{MPa}}
+\end{equation}
+
+\subsubsection*{Posición de la tensión cortante máxima}
+
+La tensión cortante máxima ocurre en el tramo B--C, correspondiente al tramo de aluminio, en el intervalo:
+
+\begin{equation}
+\boxed{1.2\ \text{m} \leq x \leq 2.5\ \text{m}}
+\end{equation}
+
+\subsubsection*{Verificación mediante la fórmula alternativa}
+
+También puede verificarse el resultado usando directamente:
+
+\begin{equation}
+\tau_{\max}=\frac{T\,r}{J}
+\end{equation}
+
+Para el tramo B--C:
+
+\begin{equation}
+\tau_{\max,BC}
+=\frac{500\cdot 0.025}{6.136\times 10^{-7}}
+=\frac{12.5}{6.136\times 10^{-7}}
+=20.37\times 10^6\ \text{Pa}
+\end{equation}
+
+Se obtiene el mismo resultado, lo cual valida el cálculo realizado.
+
+\subsubsection*{Interpretación de resultados}
+
+\begin{itemize}
+    \item La tensión cortante máxima se presenta en el tramo B--C.
+    \item Esto se debe a que en dicho tramo actúa el mayor momento torsor en valor absoluto y, además, la sección posee menor diámetro, lo que reduce el módulo resistente a la torsión.
+    \item Aunque el signo del momento torsor en B--C es negativo, para el análisis de resistencia se utiliza su valor absoluto.
+\end{itemize}
+
+\subsubsection*{Distribución de tensiones cortantes}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[x=0.9cm,y=0.22cm,>=Stealth]
+
+% Ejes
+\draw[->, thick] (-0.5,0) -- (10,0) node[right] {$x$ (m)};
+\draw[->, thick] (0,-1) -- (0,24) node[above] {$\tau_{\max}(x)$};
+
+% Línea horizontal de referencia
+\draw[thin, gray] (0,0) -- (10,0);
+
+% Puntos de cambio de tramo
+\draw[dashed, thin] (0, -0.8) -- (0, 22);
+\draw[dashed, thin] (4.3, -0.8) -- (4.3, 22);
+\draw[dashed, thin] (9, -0.8) -- (9, 22);
+
+% Etiquetas de posición en x
+\node at (0, -1) {$0$};
+\node at (4.3, -1) {$1.2$};
+\node at (9, -1) {$2.5$};
+
+
+% Tramo A-B
+\draw[thick, blue, line width=1.2pt] (0, 7.07) -- (4.3, 7.07);
+\fill[blue] (0, 7.07) circle (0.08);
+\fill[blue] (4.3, 7.07) circle (0.08);
+
+% Tramo B-C
+\draw[thick, red, line width=1.2pt] (4.3, 20.37) -- (9, 20.37);
+\fill[red] (4.3, 20.37) circle (0.08);
+\fill[red] (9, 20.37) circle (0.08);
+
+% Relleno
+\fill[blue!20] (0,0) rectangle (4.3, 7.07);
+\fill[red!20] (4.3,0) rectangle (9, 20.37);
+
+% Etiquetas de valores
+\node[blue] at (2.15, 8.2) {$\tau_{\max,AB}=7.07$};
+\node[red] at (6.65, 21.4) {$\tau_{\max,BC}=20.37$};
+
+% Línea vertical en B
+\draw[dashed, gray] (4.3, 0) -- (4.3, 21.5);
+
+% Etiqueta de puntos
+\node at (0, -2.7) {A};
+\node at (4.3, -2.7) {B};
+\node at (9, -2.7) {C};
+% Marcas en eje vertical
+\draw (-0.12,7.07) -- (0.12,7.07);
+\node[left] at (-0.15,7.07) {\small 7.07};
+
+\draw (-0.12,20.37) -- (0.12,20.37);
+\node[left] at (-0.15,20.37) {\small 20.37};
+% Indicación del máximo
+\draw[->, thick, red] (7.1, 16.0) -- (8.2, 19.5);
+\node[red, right] at (8.25,15.8) {$\tau_{\max}=20.37$};
+
+\end{tikzpicture}
+\caption{Diagrama de tensiones cortantes máximas a lo largo de la barra.}
+\label{fig:tensiones_cortantes}
+\end{figure}
+
+\subsubsection*{Distribución radial de tensiones cortantes}
+
+En cada sección circular maciza, la tensión cortante varía linealmente con la distancia al centro, siendo nula en el eje y máxima en la periferia. Esta distribución queda expresada por:
+
+\begin{equation}
+\tau(r)=\frac{T\,r}{J}
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+
+% Sección circular
+\draw[thick] (0,0) circle (1.2);
+
+% Centro
+\fill (0,0) circle (0.05);
+\node at (0,-0.28) {$\tau=0$};
+
+% Radio
+\draw[thick, blue] (0,0) -- (1.2,0);
+\node[blue, below] at (0.65,-0.18) {$\tau(r)=\dfrac{T\,r}{J}$};
+
+% Flechas tangenciales en la periferia
+\foreach \angle in {0,45,90,135,180,225,270,315} {
+    \draw[->, red, thick]
+    ({1.2*cos(\angle)}, {1.2*sin(\angle)})
+    -- ({1.5*cos(\angle)}, {1.5*sin(\angle)});
+}
+
+% Flecha destacando tau max
+\draw[->, thick, red] (0.75,0.75) -- (1.08,1.08);
+\node[red, above] at (1.02,1.15) {$\tau_{\max}$};
+
+% Etiquetas
+\node at (0,-1.75) {Distribución lineal de tensiones cortantes};
+\node at (0,-2.15) {Máxima en la periferia y nula en el centro};
+
+\end{tikzpicture}
+\caption{Distribución radial de tensiones cortantes en una sección circular maciza.}
+\label{fig:distribucion_tensiones}
+\end{figure}
+
+
+\subsubsection*{Verificación de resistencia}
+
+Para verificar que la barra trabaja dentro del régimen elástico, se comparan las tensiones cortantes máximas calculadas con una tensión de referencia a corte estimada a partir del límite de fluencia de cada material. Adoptando el criterio de Tresca:
+
+\begin{equation}
+\tau_y \approx \frac{\sigma_y}{2}
+\end{equation}
+
+se obtienen los siguientes valores de referencia:
+
+\begin{itemize}
+    \item Acero SAE/AISI 1045 trefilado:
+    \[
+    \tau_{y,ac} \approx \frac{585}{2} = 292.5\ \text{MPa}
+    \]
+
+    \item Aleación de aluminio AA 6061-T6:
+    \[
+    \tau_{y,al} \approx \frac{276}{2} = 138\ \text{MPa}
+    \]
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Tramo} & \textbf{Material} & $\mathbf{\tau_{\max}}$ (MPa) & $\mathbf{\tau_y}$ (MPa) & \textbf{Verificación} \\
+\hline
+A--B & Acero SAE/AISI 1045 trefilado & $7.07$ & $292.5$ & $\tau_{\max} < \tau_y$ \checkmark \\
+\hline
+B--C & Aleación de aluminio AA 6061-T6 & $20.37$ & $138$ & $\tau_{\max} < \tau_y$ \checkmark \\
+\hline
+\end{tabular}
+\caption{Verificación resistente a corte por tramo.}
+\label{tab:verificacion_resistencia}
+\end{table}
+
+Ambos tramos trabajan dentro del rango elástico. Los coeficientes de seguridad aproximados resultan:
+
+\begin{itemize}
+    \item Tramo A--B:
+    \[
+    CS_{AB}=\frac{292.5}{7.07}=41.37
+    \]
+
+    \item Tramo B--C:
+    \[
+    CS_{BC}=\frac{138}{20.37}=6.77
+    \]
+\end{itemize}
+
+\subsubsection*{Resumen de resultados}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Tramo} & \textbf{Material} & $\mathbf{|T|}$ (N$\cdot$m) & $\mathbf{W_t}$ (m$^3$) & $\mathbf{\tau_{\max}}$ (MPa) \\
+\hline
+A--B & Acero SAE/AISI 1045 trefilado & $300$ & $4.241 \times 10^{-5}$ & $7.07$ \\
+\hline
+B--C & Aleación de aluminio AA 6061-T6 & $500$ & $2.454 \times 10^{-5}$ & $\mathbf{20.37}$ \\
+\hline
+\end{tabular}
+\caption{Resumen de tensiones cortantes máximas por tramo.}
+\label{tab:resumen_tensiones}
+\end{table}
+
+\subsubsection*{Interpretación física}
+
+\begin{itemize}
+    \item La tensión cortante máxima en la barra es $\mathbf{20.37\ \text{MPa}}$, y ocurre en el tramo B--C, correspondiente al tramo de aluminio.
+    
+    \item Aunque el momento torsor en el tramo B--C es aproximadamente $1.67$ veces mayor que en el tramo A--B ($500$ N$\cdot$m frente a $300$ N$\cdot$m), la tensión cortante máxima resulta notablemente mayor debido a la menor capacidad resistente geométrica de la sección.
+    
+    \item En particular, el tramo B--C posee menor diámetro ($50$ mm frente a $60$ mm), y dado que para una sección circular maciza se verifica que:
+    \[
+    \tau_{\max}\propto \frac{T}{d^3}
+    \]
+    una reducción del diámetro incrementa de manera significativa la tensión cortante.
+    
+    \item El tramo de acero presenta una holgura resistente muy amplia, mientras que el tramo de aluminio resulta más exigido; sin embargo, ambos permanecen claramente dentro del régimen elástico para las cargas consideradas.
+    
+    \item La distribución radial de tensiones muestra que la tensión es nula en el centro y máxima en la periferia, lo cual explica por qué en aplicaciones reales muchas veces se recurre a ejes tubulares para reducir masa sin perder demasiada eficiencia resistente frente a torsión.
+\end{itemize}
+
+\end{enumerate}
+\newpage
+
+\pagecolor{yellow!50}
+% --- Ejercicio 2 ---
+\subsection{2: Estructura Hiperestática de Grado 1 Sometida a Torsión}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.1, >=Stealth]
+
+% --- Configuración de Coordenadas y Dimensiones ---
+\def\A{0}
+\def\B{3.2}   % 0.8 m escalado (factor 4)
+\def\C{8.0}   % 2.0 m escalado (factor 4)
+\def\y{0}
+\def\radio{0.55} 
+
+% --- BARRA CILÍNDRICA CON VOLUMEN ---
+\shade[left color=gray!40, right color=gray!15, draw=black, thick] 
+    (\A, \radio) -- (\C, \radio) -- (\C, -\radio) -- (\A, -\radio) -- cycle;
+\draw[thick] (\A, \radio) -- (\C, \radio);
+\draw[thick] (\A, -\radio) -- (\C, -\radio);
+
+% Tapas elípticas
+\shade[top color=gray!20, bottom color=gray!5, draw=black] (\A, 0) ellipse (0.1 and \radio);
+\shade[top color=gray!20, bottom color=gray!5, draw=black] (\C, 0) ellipse (0.1 and \radio);
+
+% --- EMPOTRAMIENTOS ---
+\draw[fill=white, postaction={pattern=north east lines}] (\A-0.8, \radio+0.3) rectangle (\A, -\radio-0.3);
+\draw[very thick] (\A, \radio+0.3) -- (\A, -\radio-0.3);
+\node[font=\footnotesize] at (\A-1.5, 0) {\textbf{A}};
+
+\draw[fill=white, postaction={pattern=north east lines}] (\C, \radio+0.3) rectangle (\C+0.8, -\radio-0.3);
+\draw[very thick] (\C, \radio+0.3) -- (\C, -\radio-0.3);
+\node[font=\footnotesize] at (\C+1.5, 0) {\textbf{C}};
+
+% --- LÍNEA DE REFERENCIA B ---
+\draw[dashed, gray!60] (\B, \radio+0.5) -- (\B, -\radio-0.5);
+\node[below, font=\small] at (\B, -\radio-0.2) {\textbf{B}};
+
+% --- CARGA M EN B (Corregido el posicionamiento) ---
+\begin{scope}[shift={(\B, 0)}, yslant=0.25, xscale=0.45]
+    % Al estar en un scope con shift=(B,0), las coordenadas x del plot deben ser 0
+    \draw[->, blue, ultra thick, domain=-110:150, samples=60] 
+        plot ({ 0 + 1.2*cos(\x) }, { 1.5*\radio*sin(\x) });
+\end{scope}
+
+% Etiqueta del momento M
+\node[blue, font=\normalsize, anchor=south] at (\B, \radio+0.8) {$M = 1000$ N$\cdot$m};
+
+% --- COTAS ---
+% Cota L1
+\draw[|<->|] (\A, -\radio-0.8) -- node[below, font=\footnotesize] {$L_1 = 0.8$ m} (\B, -\radio-0.8);
+% Cota Total
+\draw[|<->|] (\A, -\radio-1.5) -- node[below, font=\footnotesize] {$L = 2.0$ m} (\C, -\radio-1.5);
+
+% Cota de Diámetro
+\draw[<->, thin] (\C+0.2, \radio) -- node[right, font=\tiny] {$d = 60$ mm} (\C+0.2, -\radio);
+
+\end{tikzpicture}
+\caption{Diagrama de la barra hiperestática con momento torsor en B ($x = 0.8$ m).}
+\label{fig:barra_hiperestatica}
+\end{figure}
+% Repetir estructura de subsecciones: Formulación, Material, Cálculo, Simulación, Comparativa. [cite: 77]
+Se tiene una barra circular maciza de \textbf{longitud total $L = 2.0$ m}, empotrada en ambos extremos (A y C), lo que genera un sistema hiperestático de grado 1. La barra es de sección constante y material homogéneo.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Parámetro} & \textbf{Valor} \\
+\hline
+Longitud total & $L = 2.0$ m \\
+\hline
+Diámetro de la barra & $d = 60$ mm \\
+\hline
+Material & Acero AISI 1020 (laminado en caliente) \\
+\hline
+Módulo de corte & $G = 79$ GPa \\
+\hline
+Límite elástico a corte & $\tau_{el} \approx 180$ MPa \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{Propiedades geométricas de la sección}
+
+Para la sección circular maciza:
+\begin{itemize}
+    \item Radio: $r = d/2 = 30$ mm $= 0.030$ m
+    \item Momento polar de inercia: $J = \dfrac{\pi \cdot d^4}{32} = \dfrac{\pi \cdot (0.060)^4}{32} = 1.272 \times 10^{-6}$ m$^4$
+    \item Módulo resistente a la torsión: $W_t = \dfrac{J}{r} = \dfrac{\pi \cdot d^3}{16} = 4.241 \times 10^{-5}$ m$^3$
+\end{itemize}
+
+\subsection*{Condiciones de apoyo}
+
+\begin{itemize}
+    \item \textbf{Extremo A (x = 0):} Empotramiento (giro nulo: $\phi_A = 0$)
+    \item \textbf{Extremo C (x = 2.0 m):} Empotramiento (giro nulo: $\phi_C = 0$)
+\end{itemize}
+
+\subsection*{Cargas aplicadas}
+
+\begin{itemize}
+    \item En el punto B, ubicado a $L_1 = 0.8$ m del extremo A: momento torsor puntual $M = 1000$ N$\cdot$m (sentido antihorario visto desde el extremo C)
+\end{itemize}
+
+\subsection*{Esquema de la barra}
+
+
+
+\subsection*{Se pide}
+
+\begin{enumerate}
+    \item[a)] Dibujar el diagrama de cuerpo libre de la barra.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.1, >=Stealth]
+
+% --- Configuración de Coordenadas y Dimensiones ---
+\def\A{0}
+\def\B{3.2}   % 0.8 m escalado (factor 4)
+\def\C{8.0}   % 2.0 m escalado (factor 4)
+\def\y{0}
+\def\radio{0.55} % Radio del cilindro
+
+% --- BARRA CILÍNDRICA CON VOLUMEN (Grosor Real) ---
+% Usamos degradado para simular la luz en el metal
+\shade[left color=gray!30, right color=gray!10, draw=black, thick] 
+    (\A, \radio) -- (\C, \radio) -- (\C, -\radio) -- (\A, -\radio) -- cycle;
+% Línea superior e inferior más marcadas
+\draw[thick] (\A, \radio) -- (\C, \radio);
+\draw[thick] (\A, -\radio) -- (\C, -\radio);
+
+% Tapa elíptica izquierda (sección interna en A)
+\shade[top color=gray!20, bottom color=gray!5, draw=black, thick] (\A, 0) ellipse (0.1 and \radio);
+
+% Tapa elíptica derecha (sección externa en C)
+\shade[top color=gray!20, bottom color=gray!5, draw=black, thick] (\C, 0) ellipse (0.1 and \radio);
+
+% --- CARGA M EN B (Torsor Elíptico Grueso y Profundo) ---
+% El torsor rodea la barra desde atrás hacia adelante, grueso
+\begin{scope}[shift={(\B, 0)}, yslant=0.25, xscale=0.45]
+    % domain=-100:160: el torsor empieza "detrás" y termina "delante"
+    \draw[->, blue, ultra thick, domain=-100:160, samples=50] 
+        plot ({ 0 + 1.2*cos(\x) }, { 1.3*\radio*sin(\x) });
+\end{scope}
+
+% Etiqueta del momento M (Subida para alinearse visualmente)
+\node[blue, font=\normalsize, anchor=south] at (\B, \radio+0.8) {\textbf{B}: $M = 1000$ N$\cdot$m};
+
+% --- REACCIONES EN LOS EMPOTRAMIENTOS (Diagrama de Cuerpo Libre) ---
+% Usamos flechas elípticas para representar los momentos torsores de reacción en púrpura
+
+% Reacción Ta (Púrpura, más elíptica y alejada)
+% Usamos transformaciones para aplanar el arco
+\begin{scope}[shift={(\A-0.2, 0)}, yslant=0.3, xscale=0.5]
+    \draw[<->, purple, thick] (0, \radio+0.8) arc (90:270: \radio+1.0);
+    \node[purple, left, xscale=2] at (-0.5, 0) {$M_A$};
+\end{scope}
+
+% Reacción Tc (Púrpura, simétrica a Ta)
+\begin{scope}[shift={(\C+0.2, 0)}, yslant=-0.3, xscale=0.5]
+    \draw[<->, purple, thick] (0, \radio+0.8) arc (90:-90: \radio+1.0);
+    \node[purple, right, xscale=2] at (0.5, 0) {$M_C$};
+\end{scope}
+
+% --- COTAS LONGITUDINALES Y ETIQUETAS DE PUNTOS ---
+% Etiquetas de puntos (más limpias)
+\node[below, font=\small] at (\A, -\radio-0.3) {\textbf{A}};
+\node[below, font=\small] at (\B, -\radio-0.3) {\textbf{B}};
+\node[below, font=\small] at (\C, -\radio-0.3) {\textbf{C}};
+
+% Cota L1
+\draw[|<->|] (\A, -\radio-0.8) -- node[below, font=\footnotesize] {$L_1 = 0.8$ m} (\B, -\radio-0.8);
+% Cota Total L
+\draw[|<->|] (\A, -\radio-1.5) -- node[below, font=\footnotesize] {$L_{total} = 2.0$ m} (\C, -\radio-1.5);
+
+% Cota de Diámetro d (referencial en C)
+\draw[<->, thin] (\C+0.3, \radio) -- node[right, font=\tiny] {$d = 60$ mm} (\C+0.3, -\radio);
+
+\end{tikzpicture}
+\caption{Diagrama de cuerpo libre 3D: Barra bimetálica sometida a torsión con cargas elípticas.}
+\label{fig:barra_ejercicio1DCL}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    \item[b)] Calcular las reacciones en los apoyos. Plantear la hiperestaticidad y levantar la misma por medio de ecuaciones de compatibilidad de deformación.
+    \item[c)] Determinar el diagrama de momento torsor.
+    \item[d)] Indicar el valor y la posición del momento torsor máximo.
+    \item[e)] Determinar el ángulo de giro máximo, indicando su posición.
+    \item[f)] Calcular las tensiones cortantes máximas.
+\end{enumerate}
+
+\subsection*{Observaciones}
+
+\begin{itemize}
+    \item El sistema es \textbf{hiperestático de grado 1} debido a que tiene dos reacciones incógnita ($T_A$ y $T_C$) y una sola ecuación de equilibrio estático.
+    \item Para resolverlo, se utilizará la \textbf{ecuación de compatibilidad de deformaciones}: el ángulo de giro relativo entre los dos extremos empotrados es nulo.
+    \item Se considerará la convención de signos que se defina en la resolución.
+\end{itemize}
+
+
+
+
+
+
+\newpage
+\pagecolor{green!50}
+% --- Ejercicio 3 ---
+\subsection{Ejercicio 3: Estructura Hiperestática con Condiciones Especiales}
+% Incorporar apoyo imperfecto o interacción axial [cite: 86]
+
+% --- 4. Discusión ---
+\section{Discusión}
+% Análisis del comportamiento, precisión y limitaciones [cite: 154-158]
+
+% --- 5. Conclusiones ---
+\section{Conclusiones}
+% Hallazgos principales y evaluación del software [cite: 159-163]
+
+% --- 6. Referencias ---
+\section{Referencias}
+% Listado en formato APA 7ma Edición [cite: 164, 178]
+\begin{itemize}
+    \item Hibbeler, R. C. (2017). \textit{Mecánica de materiales}. Pearson Educación.
+\end{itemize}
+
+\end{document}
